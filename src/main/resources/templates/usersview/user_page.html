@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Только для Юзера</title>
+
+    <link rel="shortcut icon"
+          href="https://cdn-icons-png.flaticon.com/256/5020/5020658.png">
+    <!--   для оформления подключаю Bootstrap CSS (таблицу каскадных стилей CSS) напрямую по ссылке: -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- задаю стили через SCSS: -->
+    <style>
+        body { /*цвет всего фона страницы*/
+            background-color: #FAFAFA;
+        }
+
+        .table { /*общее оформление таблиц*/
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead { /*общее оформление головы таблиц*/
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .table th, .table td { /*общее оформление текста ячеек таблиц*/
+            padding: 12px;
+            text-align: left;
+        }
+
+        .btn-edit, .btn-delete { /*общее оформление кнопок в таблице */
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn-edit { /* оформление кнопки edit в таблице */
+            background-color: #20c997;
+            border: none;
+            color: #000;
+        }
+
+        .btn-delete { /* оформление кнопки delete в таблице */
+            background-color: #f45050;
+            border: none;
+            color: #fff;
+        }
+
+        .btn-current { /*оформление кнопоки вне курсора current  */
+            background-color: #0277BD;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .btn-other { /*оформление кнопоки вне курсора other  */
+            background-color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #0277BD;
+        }
+
+        .btn-current:hover, .btn-other:hover { /* оформление кнопок current и other (при наведении курсором) */
+            background-color: #E1F5FE;
+            border-radius: 4px;
+            color: #01579B;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="row p-3" style="background-color: #424242; color: white;"> <!-- первый ряд сетки страницы -->
+        <div class="col text-start"> <!-- левая колонка 1 ряда -->
+            <b th:utext="${auth_user.getEmail()}">val</b>
+            <span th:utext="${'with roles: ' + #strings.arrayJoin(auth_user.getRoles(), ', ')}">val</span>
+        </div>
+        <!-- закрыл левую колонку -->
+        <!-- правая колонка первого ряда -->
+        <div class="col text-end">
+            <a href="/logout" class="text-decoration-none opacity-50" style="color: white;">Логаут</a>
+        </div>
+        <!-- закрыл правую колонку -->
+    </div>
+    <!-- закрыл первый ряд сетки страницы -->
+
+    <div class="row"> <!-- второй ряд сетки страницы -->
+        <div class="col-2 p-0" style="background-color: #fff;">
+            <!-- левая колонка второго ряда страницы -->
+            <a href="/start" class="text-decoration-none">
+                <button class="btn btn-other w-100 text-start mt-3">Start page</button>
+            </a>
+            <a href="/admin" class="text-decoration-none">
+                <button class="btn btn-other w-100 text-start mt-3">Admin</button>
+            </a>
+            <br>
+            <a href="/user" class="text-decoration-none">
+                <button class="btn btn-current w-100 text-start">User</button>
+            </a>
+        </div>
+        <!-- правая колонка второго ряда страницы -->
+        <div class="col  p-3">
+            <h3><strong>User information page</strong></h3>
+            <div class="container mt-5">
+                <!-- Вкладки для переключения таблиц -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="table1-tab" data-bs-toggle="tab" data-bs-target="#table1"
+                                type="button" role="tab" aria-controls="table1" aria-selected="true">Юзеры БД
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="table2-tab" data-bs-toggle="tab" data-bs-target="#table2"
+                                type="button" role="tab" aria-controls="table2" aria-selected="false">База данных
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Контент вкладок -->
+                <div class="tab-content" id="myTabContent">
+                    <!-- 1 ВКЛАДКА -->
+                    <div class="tab-pane fade show active" id="table1" role="tabpanel" aria-labelledby="table1-tab">
+                        <table class="table table mb-0 table-striped table-bordered mt-3">
+                            <!-- Таблица для вложения Users table -->
+                            <tbody>
+                            <tr>
+                                <th>Список юзеров, имеющих доступ к БД</th>
+                            </tr>
+                            <tr><!-- вторая строка тела таблицы (в неё вложена таблица Users table) -->
+                                <td>
+                                    <table class="table table mb-0 table-striped table-hover ">
+                                        <!-- Таблица Users table -->
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Имя</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Роли</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="user, state : ${all_users}"
+                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'">
+                                            <!-- вместо ... thymeleaf подставит значение-->
+                                            <td th:utext="${user.getId()}">...</td>
+                                            <td th:utext="${user.getUsername()}">...</td>
+                                            <td th:utext="${user.getEmail()}">...</td>
+                                            <!-- вывожу роли через запятую без скобок []-->
+                                            <td th:utext="${#strings.arrayJoin(user.getRoles(), ', ')}">...</td>
+                                        </tr>
+                                        </tbody>
+                                    </table> <!-- конец Users table таблицы  -->
+                                </td>
+                            </tr>
+                            </tbody> <!-- конец All users таблицы для вложения Users table  -->
+                        </table>
+                    </div>
+                    <!-- конец первой вкладки -->
+
+                    <!-- 2 ВКЛАДКА -->
+                    <div class="tab-pane fade" id="table2" role="tabpanel" aria-labelledby="table2-tab">
+                        <table class="table table mb-0 table-striped table-bordered mt-3">
+                            <!-- Таблица для вложения Users table -->
+                            <tbody>
+                            <tr>
+                                <th>Список записей в БД</th>
+                            </tr>
+                            <tr><!-- вторая строка тела таблицы (в неё вложена таблица Users table) -->
+                                <td>
+                                    <table class="table table mb-0 table-striped table-hover ">
+                                        <!-- Таблица Users table -->
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Имя</th>
+                                            <th scope="col">Возраст</th>
+                                            <th scope="col">Email</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="userDb, state : ${all_usersDb}"
+                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'">
+                                            <!-- вместо ... thymeleaf подставит значение-->
+                                            <td th:utext="${userDb.getId()}">...</td>
+                                            <td th:utext="${userDb.getName()}">...</td>
+                                            <td th:utext="${userDb.getAge()}">...</td>
+                                            <td th:utext="${userDb.getEmail()}">...</td>
+                                        </tr>
+                                        </tbody>
+                                    </table> <!-- конец Users table таблицы  -->
+                                </td>
+                            </tr>
+                            </tbody>
+                            <!-- конец All users таблицы для вложения Users table  -->
+                        </table>
+                    </div>
+                </div> <!-- закрыл правую широкую колонку страницы -->
+            </div>
+        </div>
+    </div> <!-- закрыл второй ряд сетки страницы -->
+</div> <!-- закрыл область деления страницы сеткой -->
+
+<!--  тег script для пакета JavaScript (включая Popper для позиционирования раскрывающихся списков, всплывающих окон и подсказок):-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

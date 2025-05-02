@@ -1,0 +1,9 @@
+https://www.webjars.org/ - зависимости для Maven
+https://www.webjars.org/documentation#springmvc - инструкция по интеграции bootstrap в Spring MVC (+Spring Boot)
+
+https://bootstrap-5.ru/docs/5.3/getting-started/introduction/ инструкция по отрисовке страницы
+https://materialui.co/colors - цвета по кодировкам
+
+https://bootstrap-cheatsheet.themeselection.com/#container - подсказки по всему функционалу
+
+https://chat.deepseek.com/

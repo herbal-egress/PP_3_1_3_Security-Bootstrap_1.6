@@ -1,0 +1,587 @@
+<!--https://getbootstrap.com/docs/5.3/getting-started/introduction -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- тег <meta name="viewport"> для правильного
+    отзывчивого поведения на мобильных устройствах. -->
+    <title>Админ</title>
+    <!-- иконка на вкладку: -->
+    <link rel="shortcut icon"
+          href="https://cdn-icons-png.flaticon.com/256/5020/5020658.png">
+    <!--   для оформления подключаю Bootstrap CSS (таблицу каскадных стилей CSS) напрямую по ссылке: -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Стили, цвета, рамки таблиц и кнопок: -->
+    <style>
+        body { /*цвет всего фона страницы*/
+            background-color: #FAFAFA;
+        }
+
+        .table { /*общее оформление таблиц*/
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead { /*общее оформление головы таблиц*/
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .table th, .table td { /*общее оформление текста ячеек таблиц*/
+            padding: 12px;
+            text-align: left;
+        }
+
+        .add_user { /* общее оформление для полей ввода */
+            width: 50%; /* ширина поля ввода на 50% от ширины родительского элемента */
+            align-items: center; /* центрирование внутри родительского элемента */
+            /*   max-width: 300px; /* Ограничиваем максимальную ширину, чтобы оно не становилось слишком широким на больших экранах. */
+        }
+
+        .btn-edit { /* оформление кнопки edit в таблице */
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #00838F;
+            color: #fff;
+        }
+
+        .btn-edit:hover { /* оформление кнопки edit в таблице (при наведении курсором) */
+            background-color: #E0F2F1;
+            border-radius: 4px;
+            color: #00838F;
+        }
+
+        .btn-del { /* оформление кнопки delete в таблице */
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #B71C1C;
+            color: #fff;
+        }
+
+        .btn-del:hover { /* оформление кнопки delete в таблице (при наведении курсором) */
+            background-color: #FFCDD2;
+            border-radius: 4px;
+            color: #B71C1C;
+        }
+
+        .btn-current { /*оформление кнопки current вне курсора   */
+            background-color: #0277BD;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .btn-other { /*оформление кнопоки вне курсора other  */
+            background-color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #0277BD;
+        }
+
+
+        .btn-current:hover, .btn-other:hover { /* оформление кнопок current и other (при наведении курсором) */
+            background-color: #E1F5FE;
+            border-radius: 4px;
+            color: #01579B;
+        }
+
+        .btn-add { /*оформление кнопки AddNewUser вне курсора */
+            background-color: #00838F;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .btn-add:hover { /* оформление кнопки AddNewUser (при наведении курсором) */
+            background-color: #E0F2F1;
+            border-radius: 4px;
+            color: #00838F;
+        }
+    </style>
+</head>
+
+<body>
+<!-- Указываю всю страницу контейнером, чтобы разделить сеткой на колонки и ряды. Он центрирует содержимое и ограничивает ширину. -->
+<div class="container">
+    <!-- 1 ряд сетки страницы. Заголовок страницы и ЛОГАУТ -->
+    <div class="row p-3" style="background-color: #424242; color: white;">
+        <!-- темная заливка всего ряда, p-3 - отступ вокруг контента, цвет текста всего ряда белый: -->
+        <!-- левая колонка 1 ряда, выравнивание -->
+        <div class="col text-start">
+            <b th:utext="${auth_user.getEmail()}">val</b>
+            <!-- строка без переноса на следующую: -->
+            <span th:utext="${'with roles: ' + #strings.arrayJoin(auth_user.getRoles(), ', ')}">val</span>
+        </div>
+        <!-- закрыл левую колонку 1 ряда -->
+        <!-- правая колонка 1 ряда, выравнивание  -->
+        <div class="col text-end">
+            <a href="/logout" class="text-decoration-none opacity-50" style="color: white;">Логаут</a> <!-- ссылка логаута,
+            цвет белый, прозрачность 50%, без подчеркивания  -->
+        </div>
+        <!-- закрыл правую колонку -->
+    </div>
+    <!-- закрыл 1 ряд сетки страницы -->
+    <!-- 2 ряд сетки страницы -->
+    <div class="row">
+        <!-- 2.1 Колонка. Ссылки на Admin и User: -->
+        <div class="col-2 p-0" style="background-color: #fff;">
+            <!-- левая колонка второго ряда страницы, ширина 2 из 12 -->
+            <a href="/start" class="text-decoration-none">
+                <button class="btn btn-other w-100 text-start mt-3">Start page</button>   <!-- кнопка для перехода по ссылке,
+                длина на всю сетку, текст слева, отступ от сетки сверху = mt-3 -->
+            </a>
+            <a href="/admin" class="text-decoration-none">
+                <button class="btn btn-current w-100 text-start mt-3">Admin</button>   <!-- кнопка для перехода по ссылке,
+                длина на всю сетку, текст слева, отступ от сетки сверху = mt-3 -->
+            </a>
+            <br>
+            <a href="/user" class="text-decoration-none">
+                <button class="btn btn-other w-100 text-start">User</button>  <!-- кнопка для перехода по ссылке -->
+            </a> <!-- ссылка на страницу юзера без подчеркивания -->
+        </div>
+        <!-- 2.2 колонка. Содержит таблицы во вкладках -->
+        <div class="col p-3">  <!-- ширина до конца страницы, отступ от контента р-3 -->
+            <h3><strong>Admin panel</strong></h3> <!-- заголовок. Третий размер, жирный -->
+            <div class="container mt-5">
+                <!-- Вкладки для переключения таблиц -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="table1-tab" data-bs-toggle="tab" data-bs-target="#table1"
+                                type="button" role="tab" aria-controls="table1" aria-selected="true">База данных
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="table2-tab" data-bs-toggle="tab" data-bs-target="#table2"
+                                type="button" role="tab" aria-controls="table2" aria-selected="false">Добавить в БД
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="table3-tab" data-bs-toggle="tab" data-bs-target="#table3"
+                                type="button" role="tab" aria-controls="table3" aria-selected="false">Добавить юзера БД
+                        </button>
+                    </li>
+                </ul>
+                <!-- Контент вкладок -->
+                <div class="tab-content" id="myTabContent">
+
+                    <!-- 1 ВКЛАДКА -->
+                    <div class="tab-pane fade show active" id="table1" role="tabpanel" aria-labelledby="table1-tab">
+                        <!-- Таблица для вложения таблицы юзеров БД -->
+                        <table class="table table mb-0 table-striped table-bordered mt-3">
+                            <tbody>  <!-- Тело таблицы -->
+                            <!-- 1 строка Заголовок -->
+                            <tr>
+                                <th>Записи базы данных</th>  <!-- Общее название для вложенной таблицы -->
+                            </tr>
+                            <!-- 2 строка тела таблицы (в неё вложена таблица юзеров БД) -->
+                            <tr>
+                                <td>
+                                    <table class="table table mb-0 table-striped table-hover ">
+                                        <!-- Таблица Users table -->
+                                        <thead> <!-- начало шапки таблицы -->
+                                        <tr> <!-- строка шапки таблицы -->
+                                            <th scope="col">ID</th>
+                                            <!-- 1 столбец. Текст жирный и по центру в шапке таблицы -->
+                                            <th scope="col">Имя</th>
+                                            <!-- 2 столбец. Текст жирный и по центру в шапке таблицы -->
+                                            <th scope="col">Возраст</th>
+                                            <th scope="col">Email</th>
+
+                                            <th scope="col">Изменить</th>
+                                            <th scope="col">Удалить</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>  <!-- Тело таблицы -->
+                                        <tr th:each="userDb, state : ${all_usersDb}"
+                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'"
+                                        >
+                                            <!-- вместо ... thymeleaf подставит значение-->
+                                            <td th:utext="${userDb.getId()}">...</td>
+                                            <td th:utext="${userDb.getName()}">...</td>
+                                            <td th:utext="${userDb.getAge()}">...</td>
+                                            <td th:utext="${userDb.getEmail()}">...</td>
+
+                                            <!-- КНПОКИ EDIT, вызывающие модальное окно -->
+                                            <td>
+                                                <!-- Нагружаю инфу здесь, что бы не перебирать заново юзеров в последующих
+                                                окнах. Дальше использую поля юзеров по атрибутам -->
+                                                <button type="button" class="btn btn-edit" data-bs-toggle="modal"
+                                                        data-bs-target="#editUserModal"
+                                                        th:attr="data-user-id=${userDb.getId()}, data-user-name=${userDb.getName()},
+                                                        data-user-age=${userDb.getAge()}, data-user-email=${userDb.getEmail()}"
+                                                > Edit
+                                                </button>
+                                            </td>
+                                            <!-- КНПОКИ DELETE, вызывающие модальное окно -->
+                                            <td>
+                                                <button type="button" class="btn btn-del" data-bs-toggle="modal"
+                                                        data-bs-target="#delUserModal"
+                                                        th:attr="data-userDel-id=${userDb.getId()}, data-userDel-name=${userDb.getName()},
+                                                        data-userDel-age=${userDb.getAge()}, data-userDel-email=${userDb.getEmail()}"
+                                                > Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- конец таблицы юзеров БД -->
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!-- конец All users таблицы для вложения Users table  -->
+
+                        <!-- МОДАЛЬНЫЕ ОКНА 1 вкладки (используют динамические значения, переданные из кнопок) -->
+                        <!-- Модальное окно Edit -->
+                        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editUserModalLabel">Изменение данных юзера</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editUserForm" method="post">
+                                            <!-- Используем значения из кнопки для подстановки их в поля формы -->
+                                            <input type="hidden" id="userId" name="id"/>
+                                            <div class="mb-3">
+                                                <label for="userName" class="form-label">Имя</label>
+                                                <input type="text" class="form-control" id="userName" name="name"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userAge" class="form-label">Возраст</label>
+                                                <input type="number" class="form-control" id="userAge" name="age"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userEmail" class="form-label">E-mail</label>
+                                                <input type="email" class="form-control" id="userEmail" name="email"/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-del" data-bs-dismiss="modal">
+                                                    Отмена
+                                                </button>
+                                                <button type="submit" class="btn btn-add">Изменить</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- закрыл модальное окно Edit -->
+
+                        <!-- Модальное окно Delete -->
+                        <div class="modal fade" id="delUserModal" tabindex="-1" aria-labelledby="delUserModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="delUserModalLabel">Удаление юзера</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="delUserForm" method="post">
+                                            <!-- Используем значения из кнопки для подстановки их в поля формы -->
+                                            <input type="hidden" id="userDelId" name="id" readonly/>
+                                            <div class="mb-3">
+                                                <label for="userDelName" class="form-label">Имя</label>
+                                                <input type="text" class="form-control" id="userDelName" readonly/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userDelAge" class="form-label">Возраст</label>
+                                                <input type="number" class="form-control" id="userDelAge" readonly/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userDelEmail" class="form-label">E-mail</label>
+                                                <input type="email" class="form-control" id="userDelEmail" readonly/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-add" data-bs-dismiss="modal">
+                                                    Отмена
+                                                </button>
+                                                <button type="submit" class="btn btn-del" id="confirmDelete">Удалить
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- закрыл модальное окно Delete -->
+                    </div>
+                    <!-- закрыл 1-ю вкладку -->
+
+                    <!-- 2 ВКЛАДКА -->
+                    <div class="tab-pane fade show" id="table2" role="tabpanel" aria-labelledby="table2-tab">
+                        <!-- Таблица для вложения полей для заполнения -->
+                        <table class="table table mb-0 table-striped table-bordered mt-3">
+                            <tbody>  <!-- Тело таблицы -->
+                            <!-- 1 строка. Заголовок -->
+                            <tr>
+                                <th>Добавить запись в БД</th>
+                            </tr>
+                            <!-- 2 строка тела  -->
+                            <tr>
+                                <td>
+                                    <div class="container add_user">
+                                        <!-- Формы с плавающими метками (floating labels) -->
+                                        <form id="newUserDbForm" action="/admin/users" method="POST">
+                                            <div class="form-floating">
+                                                <!-- Поле ввода текста -->
+                                                <input type="text" class="form-control" id="nameDb" name="name"
+                                                       placeholder="Your name" required>
+                                                <!-- Метка, которая будет "плавать" над полем ввода при фокусе или заполнении -->
+                                                <label for="nameDb">Your name</label>
+                                            </div>
+                                            <div class="form-floating mt-3">
+                                                <input type="text" class="form-control" id="ageDb" name="age"
+                                                       placeholder="Your Age" required>
+                                                <label for="ageDb">Your Age</label>
+                                            </div>
+                                            <div class="form-floating mt-3 mb-3">
+                                                <input type="email" class="form-control" id="emailDb" name="email"
+                                                       placeholder="Email address" required>
+                                                <label for="emailDb">Email address</label>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-add">Добавить</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- закрыл 2-ю вкладку  -->
+
+                    <!-- 3 ВКЛАДКА -->
+                    <div class="tab-pane fade show" id="table3" role="tabpanel" aria-labelledby="table3-tab">
+
+                        <!-- Таблица для вложения полей для заполнения -->
+                        <table class="table table mb-0 table-striped table-bordered mt-3">
+                            <tbody>  <!-- Тело таблицы -->
+                            <!-- 1 строка. Заголовок -->
+                            <tr>
+                                <th>Регистрация админа или юзера</th>
+                            </tr>
+                            <!-- 2 строка тела  -->
+                            <tr>
+                                <td>
+                                    <div class="container add_user">
+                                        <!-- Формы с плавающими метками (floating labels) -->
+                                        <form th:action="@{/admin/save}" th:object="${new_user}" th:method="post">
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">Имя:</label>
+                                                <input type="text" class="form-control" th:field="*{username}"
+                                                       id="username"/>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('username')}"
+                                                     th:errors="*{username}">Ошибка в имени пользователя
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">Пароль:</label>
+                                                <input type="password" class="form-control" th:field="*{password}"
+                                                       id="password"/>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('password')}"
+                                                     th:errors="*{password}">Ошибка в пароле
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email:</label>
+                                                <input type="text" class="form-control" th:field="*{email}" id="email"/>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('email')}"
+                                                     th:errors="*{email}">
+                                                    Ошибка в email
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Выберите роли:</label>
+                                                <div th:each="role : ${allRoles}">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="roles"
+                                                               th:value="${role.id}" th:field="*{roles}"/>
+                                                        <label class="form-check-label" th:text="${role}"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-add">Зарегаться</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- закрыл 2-ю вкладку  -->
+
+                </div> <!-- закрыл правую широкую колонку страницы -->
+            </div>
+        </div>
+    </div>
+    <!-- закрыл 2 ряд сетки страницы -->
+</div>
+<!-- закрыл область деления страницы сеткой -->
+
+<!-- JavaScript для заполнения модального окна EDIT из кнопок -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var editUserModal = document.getElementById('editUserModal');
+        editUserModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Кнопка, которая вызвала модальное окно
+
+            // Получаем данные из атрибутов кнопки
+            var userId = button.getAttribute('data-user-id');
+            var userName = button.getAttribute('data-user-name');
+            var userAge = button.getAttribute('data-user-age');
+            var userEmail = button.getAttribute('data-user-email');
+
+            // Заполняем форму в модальном окне EDIT
+            var modalUserIdInput = editUserModal.querySelector('#userId');
+            var modalUserNameInput = editUserModal.querySelector('#userName');
+            var modalUserAgeInput = editUserModal.querySelector('#userAge');
+            var modalUserEmailInput = editUserModal.querySelector('#userEmail');
+
+            modalUserIdInput.value = userId;
+            modalUserNameInput.value = userName;
+            modalUserAgeInput.value = userAge;
+            modalUserEmailInput.value = userEmail;
+        });
+    });
+</script>
+<!-- JavaScript для отправки формы в модальном окне EDIT: -->
+<script>
+    document.getElementById('editUserForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Предотвращаем стандартное поведение формы
+// Получаем значения из скрытых полей
+        const userId = document.getElementById('userId').value;
+        const userName = document.getElementById('userName').value;
+        const userAge = document.getElementById('userAge').value;
+        const userEmail = document.getElementById('userEmail').value;
+        // Формируем данные для отправки
+        const userData = {
+            id: userId,
+            name: userName,
+            age: userAge,
+            email: userEmail
+        };
+// Формируем URL с использованием userId из модального окна и отправляем PATCH-запрос:
+        fetch(`/admin/users/id?id=${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => { // действия после отправки запроса
+                if (response.ok) {
+                    // alert('Юзер успешно обновлён!');
+                    // Закрываем модальное окно после успешного обновления
+                    bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+                    // Обновляю страницу, что бы отобразились изменения юзера на страницы
+                    location.reload();
+
+                } else {
+                    alert('При обновлении юзера возникла ошибка!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+<!-- JavaScript для заполнения модального окна DELETE из кнопок -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () { // DOMContentLoaded проверяет, что вся страница загрузилась
+        var editUserModal = document.getElementById('delUserModal');
+        editUserModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Кнопка, которая вызвала модальное окно
+            // Получаем данные из атрибутов кнопки
+            var userDelId = button.getAttribute('data-userDel-id');
+            var userDelName = button.getAttribute('data-userDel-name');
+            var userDelAge = button.getAttribute('data-userDel-age');
+            var userDelEmail = button.getAttribute('data-userDel-email');
+// Заполняем форму в модальном окне DELETE
+            var modalUserIdDel = editUserModal.querySelector('#userDelId');
+            var modalUserNameDel = editUserModal.querySelector('#userDelName');
+            var modalUserAgeDel = editUserModal.querySelector('#userDelAge');
+            var modalUserEmailDel = editUserModal.querySelector('#userDelEmail');
+            modalUserIdDel.value = userDelId;
+            modalUserNameDel.value = userDelName;
+            modalUserAgeDel.value = userDelAge;
+            modalUserEmailDel.value = userDelEmail;
+        });
+    });
+</script>
+<!-- JavaScript для отправки формы в модальном окне DELETE: -->
+<script>
+    document.getElementById('delUserForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Предотвращаем стандартное поведение формы
+        // Получаем значения из скрытых полей (для удаления нужен просто id, принятый из кнопки)
+        const userDelId = document.getElementById('userDelId').value;
+        // Формируем данные для отправки
+        const userData = {
+            id: userDelId,
+        };
+        // Формируем URL с использованием userDelId из модального окна и отправляем DELETE-запрос:
+        fetch(`/admin/users/id?id=${userDelId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => { // действия после отправки запроса
+                if (response.ok) {
+                    // alert('Юзер удалён!');
+                    // Закрываем модальное окно после успешного обновления
+                    bootstrap.Modal.getInstance(document.getElementById('delUserModal')).hide();
+                    // Обновляю страницу, что бы отобразились изменения юзера на страницы
+                    location.reload();
+                } else {
+                    alert('Что-то пошло не так!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+</script>
+<!-- JavaScript. Новый юзер в БД UserDB -->
+<script>
+    document.getElementById('newUserDbForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+        // Собираем данные формы
+        const formData = new FormData(this);
+
+        // Отправляем данные на сервер
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                // alert('Добавлена запись в БД!');
+                console.log('Success:', data);
+                // Обновляю страницу, что бы отобразились изменения юзера на страницы
+                location.reload();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error adding user');
+            });
+    });
+</script>
+
+<!-- Подключаю Bootstrap, JS и зависимости -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--  для пакета Bootstrap JavaScript (включает Popper для позиционирования раскрывающихся списков, всплывающих окон и подсказок):-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
