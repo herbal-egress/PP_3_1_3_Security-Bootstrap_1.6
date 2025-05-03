@@ -69,7 +69,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteById(Long id) { // TODO реализовать!!!
+    public void deleteById(Long id) {
         userRepository.deleteUserById(id);
     }
 
