@@ -77,8 +77,8 @@
 <div class="container">
     <div class="row p-3" style="background-color: #424242; color: white;"> <!-- первый ряд сетки страницы -->
         <div class="col text-start"> <!-- левая колонка 1 ряда -->
-            <b th:utext="${auth_user.getEmail()}">val</b>
-            <span th:utext="${'with roles: ' + #strings.arrayJoin(auth_user.getRoles(), ', ')}">val</span>
+            <b th:utext="${authname_key.getEmail()}">val</b>
+            <span th:utext="${'with roles: ' + #strings.arrayJoin(authname_key.getRoles(), ', ')}">val</span>
         </div>
         <!-- закрыл левую колонку -->
         <!-- правая колонка первого ряда -->
@@ -96,108 +96,59 @@
                 <button class="btn btn-other w-100 text-start mt-3">Start page</button>
             </a>
             <a href="/admin" class="text-decoration-none">
-                <button class="btn btn-other w-100 text-start mt-3">Admin</button>
+                <button class="btn btn-other w-100 text-start mt-3">Admin page</button>
             </a>
             <br>
             <a href="/user" class="text-decoration-none">
-                <button class="btn btn-current w-100 text-start">User</button>
+                <button class="btn btn-current w-100 text-start">User page</button>
             </a>
         </div>
-        <!-- правая колонка второго ряда страницы -->
+        <!-- закрыл левую колонку 2 ряда страницы -->
+        <!-- правая колонка 2 ряда страницы -->
         <div class="col  p-3">
+            <!-- 1 колонка второго ряда страницы, содержащая таблицу -->
             <h3><strong>User information page</strong></h3>
-            <div class="container mt-5">
-                <!-- Вкладки для переключения таблиц -->
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="table1-tab" data-bs-toggle="tab" data-bs-target="#table1"
-                                type="button" role="tab" aria-controls="table1" aria-selected="true">Юзеры БД
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="table2-tab" data-bs-toggle="tab" data-bs-target="#table2"
-                                type="button" role="tab" aria-controls="table2" aria-selected="false">База данных
-                        </button>
-                    </li>
-                </ul>
 
-                <!-- Контент вкладок -->
+            <div class="container mt-5">
                 <div class="tab-content" id="myTabContent">
-                    <!-- 1 ВКЛАДКА -->
                     <div class="tab-pane fade show active" id="table1" role="tabpanel" aria-labelledby="table1-tab">
                         <table class="table table mb-0 table-striped table-bordered mt-3">
                             <!-- Таблица для вложения Users table -->
                             <tbody>
                             <tr>
-                                <th>Список юзеров, имеющих доступ к БД</th>
+                                <th>Ваши регистрационные данные из Principal</th>
                             </tr>
-                            <tr><!-- вторая строка тела таблицы (в неё вложена таблица Users table) -->
+                            <tr>
                                 <td>
                                     <table class="table table mb-0 table-striped table-hover ">
-                                        <!-- Таблица Users table -->
                                         <thead>
-                                        <tr>
+                                        <tr> <!-- строка шапки таблицы -->
                                             <th scope="col">ID</th>
+                                            <!-- 1 столбец. Текст жирный и по центру в шапке таблицы -->
                                             <th scope="col">Имя</th>
+                                            <!-- 2 столбец. Текст жирный и по центру в шапке таблицы -->
+                                            <th scope="col">Возраст</th>
                                             <th scope="col">Email</th>
                                             <th scope="col">Роли</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="user, state : ${all_users}"
-                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'">
+                                        <tr th:each="user, state : ${authname_key}"
+                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'"
+                                        >
                                             <!-- вместо ... thymeleaf подставит значение-->
-                                            <td th:utext="${user.getId()}">...</td>
-                                            <td th:utext="${user.getUsername()}">...</td>
-                                            <td th:utext="${user.getEmail()}">...</td>
-                                            <!-- вывожу роли через запятую без скобок []-->
-                                            <td th:utext="${#strings.arrayJoin(user.getRoles(), ', ')}">...</td>
+                                            <td th:text="${user.getId()}">...</td>
+                                            <!-- Заменил utext на text для безопасности -->
+                                            <td th:text="${user.getName()}">...</td>
+                                            <td th:text="${user.getAge()}">...</td>
+                                            <td th:text="${user.getEmail()}">...</td>
+                                            <td th:text="${#strings.arrayJoin(user.getRoles(), ', ')}">...</td>
                                         </tr>
                                         </tbody>
                                     </table> <!-- конец Users table таблицы  -->
                                 </td>
                             </tr>
                             </tbody> <!-- конец All users таблицы для вложения Users table  -->
-                        </table>
-                    </div>
-                    <!-- конец первой вкладки -->
-
-                    <!-- 2 ВКЛАДКА -->
-                    <div class="tab-pane fade" id="table2" role="tabpanel" aria-labelledby="table2-tab">
-                        <table class="table table mb-0 table-striped table-bordered mt-3">
-                            <!-- Таблица для вложения Users table -->
-                            <tbody>
-                            <tr>
-                                <th>Список записей в БД</th>
-                            </tr>
-                            <tr><!-- вторая строка тела таблицы (в неё вложена таблица Users table) -->
-                                <td>
-                                    <table class="table table mb-0 table-striped table-hover ">
-                                        <!-- Таблица Users table -->
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Имя</th>
-                                            <th scope="col">Возраст</th>
-                                            <th scope="col">Email</th>
-
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="userDb, state : ${all_usersDb}"
-                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'">
-                                            <!-- вместо ... thymeleaf подставит значение-->
-                                            <td th:utext="${userDb.getId()}">...</td>
-                                            <td th:utext="${userDb.getName()}">...</td>
-                                            <td th:utext="${userDb.getAge()}">...</td>
-                                            <td th:utext="${userDb.getEmail()}">...</td>
-                                        </tr>
-                                        </tbody>
-                                    </table> <!-- конец Users table таблицы  -->
-                                </td>
-                            </tr>
-                            </tbody>
-                            <!-- конец All users таблицы для вложения Users table  -->
                         </table>
                     </div>
                 </div> <!-- закрыл правую широкую колонку страницы -->

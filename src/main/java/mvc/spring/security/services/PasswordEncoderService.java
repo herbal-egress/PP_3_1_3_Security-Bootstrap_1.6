@@ -4,8 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-// Преобразователь паролей, что бы декодировал из строки в хэш и обратно.
-// Вынес этот бин в отдельный класс, что бы избавиться от проблемы циклических ссылок в Spring
 
 @Configuration
 public class PasswordEncoderService {

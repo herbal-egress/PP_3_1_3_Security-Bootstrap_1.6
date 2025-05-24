@@ -83,7 +83,8 @@
     </div>
     <!-- закрыл 1 ряд сетки страницы -->
 
-    <div class="row"> <!-- 2 ряд сетки страницы -->
+    <!-- 2 ряд сетки страницы -->
+    <div class="row">
         <div class="col-2 p-0" style="background-color: #fff;">
             <a href="/start" class="text-decoration-none">
                 <button class="btn btn-current w-100 text-start mt-3">Start page</button>
@@ -97,6 +98,7 @@
             </a>
         </div>
         <!-- закрыл левую колонку 2 ряда страницы -->
+        <!-- правая колонка 2 ряда страницы -->
         <div class="col  p-3">
             <!-- 1 колонка второго ряда страницы, содержащая таблицу -->
             <h3><strong>Start page</strong></h3>
@@ -108,26 +110,33 @@
                             <!-- Таблица для вложения Users table -->
                             <tbody>
                             <tr>
-                                <th>Записи базы данных</th>
+                                <th>Таблица юзеров</th>
                             </tr>
                             <tr>
                                 <td>
                                     <table class="table table mb-0 table-striped table-hover ">
                                         <thead>
-                                        <tr>
+                                        <tr> <!-- строка шапки таблицы -->
+                                            <th scope="col">ID</th>
+                                            <!-- 1 столбец. Текст жирный и по центру в шапке таблицы -->
                                             <th scope="col">Имя</th>
+                                            <!-- 2 столбец. Текст жирный и по центру в шапке таблицы -->
                                             <th scope="col">Возраст</th>
                                             <th scope="col">Email</th>
-
+                                            <th scope="col">Роли</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="user, state : ${startkey}"
-                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'">
+                                        <tr th:each="user, state : ${start_key}"
+                                            scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'"
+                                        >
                                             <!-- вместо ... thymeleaf подставит значение-->
-                                            <td th:utext="${user.getName()}">...</td>
-                                            <td th:utext="${user.getAge()}">...</td>
-                                            <td th:utext="${user.getEmail()}">...</td>
+                                            <td th:text="${user.getId()}">...</td>
+                                            <!-- Заменил utext на text для безопасности -->
+                                            <td th:text="${user.getName()}">...</td>
+                                            <td th:text="${user.getAge()}">...</td>
+                                            <td th:text="${user.getEmail()}">...</td>
+                                            <td th:text="${#strings.arrayJoin(user.getRoles(), ', ')}">...</td>
                                         </tr>
                                         </tbody>
                                     </table> <!-- конец Users table таблицы  -->
@@ -136,7 +145,6 @@
                             </tbody> <!-- конец All users таблицы для вложения Users table  -->
                         </table>
                     </div>
-
                 </div> <!-- закрыл правую широкую колонку страницы -->
             </div>
         </div>

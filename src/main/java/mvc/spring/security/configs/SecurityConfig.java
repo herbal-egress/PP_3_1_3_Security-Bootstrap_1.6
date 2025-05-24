@@ -9,31 +9,26 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-
-import javax.sql.DataSource;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private PasswordEncoderService passwordEncoderService;
-    private UserService userService;
+    private final PasswordEncoderService passwordEncoderService;
+    private final SuccessUserHandler successUserHandler;
+    private final UserService userService;
 
     @Autowired
-    public void setUserService(UserService userService) {
+    public SecurityConfig(PasswordEncoderService passwordEncoderService, SuccessUserHandler successUserHandler, UserService userService) {
+        this.passwordEncoderService = passwordEncoderService;
+        this.successUserHandler = successUserHandler;
         this.userService = userService;
     }
 
-    @Autowired
-    private SuccessUserHandler successUserHandler;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests() // по умолчанию csrf включен (ОТКЛЮЧИЛ, т.к. в admin_page.html
-                // используется JSON)
-                .antMatchers("/start").permitAll()
-                .antMatchers("/admin").hasRole("ADMIN")
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/start/**").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user").hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin()
@@ -48,10 +43,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authenticationProvider.setPasswordEncoder(passwordEncoderService.passwordEncoder()); // инжектим расшифровку паролей
         authenticationProvider.setUserDetailsService(userService); // передаём инфу о юзере для проверки
         return authenticationProvider;
-    }
-
-    @Bean
-    public JdbcUserDetailsManager users(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
     }
 }
