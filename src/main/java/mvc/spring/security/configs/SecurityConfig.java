@@ -1,6 +1,5 @@
 package mvc.spring.security.configs;
 
-import mvc.spring.security.services.PasswordEncoderService;
 import mvc.spring.security.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,13 +12,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final PasswordEncoderService passwordEncoderService;
+    private final PasswordEncoderConfig passwordEncoderConfig;
     private final SuccessUserHandler successUserHandler;
     private final UserService userService;
 
     @Autowired
-    public SecurityConfig(PasswordEncoderService passwordEncoderService, SuccessUserHandler successUserHandler, UserService userService) {
-        this.passwordEncoderService = passwordEncoderService;
+    public SecurityConfig(PasswordEncoderConfig passwordEncoderConfig, SuccessUserHandler successUserHandler, UserService userService) {
+        this.passwordEncoderConfig = passwordEncoderConfig;
         this.successUserHandler = successUserHandler;
         this.userService = userService;
     }
@@ -40,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setPasswordEncoder(passwordEncoderService.passwordEncoder()); // инжектим расшифровку паролей
+        authenticationProvider.setPasswordEncoder(passwordEncoderConfig.passwordEncoder()); // инжектим расшифровку паролей
         authenticationProvider.setUserDetailsService(userService); // передаём инфу о юзере для проверки
         return authenticationProvider;
     }
