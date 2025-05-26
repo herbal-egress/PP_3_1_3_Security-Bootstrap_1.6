@@ -27,9 +27,8 @@ public class UserController {
 
     @GetMapping("/user")
     public String pageForAuthenticatedUsers(Model model, Principal principal) {
-        User user = userService.findUserByName(principal.getName());
-        model.addAttribute("authname_key", user);
-        model.addAttribute("all_users", userService.findAllUser());
+        User userPrincipal = userService.findUserByName(principal.getName());
+        model.addAttribute("auth_user_key", userPrincipal);
         return "usersview/user_page";
     }
 }

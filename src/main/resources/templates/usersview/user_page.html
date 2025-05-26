@@ -75,8 +75,8 @@
     <div class="row p-3" style="background-color: #424242; color: white;">
         <!-- левая колонка 1 ряда -->
         <div class="col text-start">
-            <b th:text="${authname_key.getEmail()}">val</b>
-            <span th:text="${'with roles: ' + #strings.arrayJoin(authname_key.getRoles(), ', ')}">val</span>
+            <b th:text="${auth_user_key.getEmail()}">val</b>
+            <span th:text="${'with roles: ' + #strings.arrayJoin(auth_user_key.getRoles(), ', ')}">val</span>
         </div>
         <!-- закрыл левую колонку -->
         <!-- правая колонка первого ряда -->
@@ -128,7 +128,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="user, state : ${authname_key}"
+                                        <tr th:each="user, state : ${auth_user_key}"
                                             scope="row" th:classappend="${state.odd} ? 'odd-row' : 'even-row'"
                                         >
                                             <td th:text="${user.getId()}">...</td>

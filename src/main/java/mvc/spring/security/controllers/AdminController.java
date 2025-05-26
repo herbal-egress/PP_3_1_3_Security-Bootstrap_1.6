@@ -34,8 +34,8 @@ public class AdminController {
         List<Role> roles = roleService.findAllRole();
         mav.addObject("all_roles", roles);
         model.addAttribute("all_users", userService.findAllUser());
-        User userPr = userService.findUserByName(principal.getName());
-        model.addAttribute("auth_user", userPr);
+        User userPrincipal = userService.findUserByName(principal.getName());
+        model.addAttribute("auth_user_key", userPrincipal);
         return mav;
     }
 

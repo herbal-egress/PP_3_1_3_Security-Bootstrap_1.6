@@ -103,9 +103,9 @@
         <!-- темная заливка всего ряда, p-3 - отступ вокруг контента, цвет текста всего ряда белый: -->
         <!-- левая колонка 1 ряда, выравнивание -->
         <div class="col text-start">
-            <b th:text="${auth_user.getEmail()}">val</b>
+            <b th:text="${auth_user_key.getEmail()}">val</b>
             <!-- строка без переноса на следующую: -->
-            <span th:text="${'with roles: ' + #strings.arrayJoin(auth_user.getRoles(), ', ')}">val</span>
+            <span th:text="${'with roles: ' + #strings.arrayJoin(auth_user_key.getRoles(), ', ')}">val</span>
         </div>
         <!-- закрыл левую колонку 1 ряда -->
         <!-- правая колонка 1 ряда, выравнивание  -->
